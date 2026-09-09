@@ -8,30 +8,40 @@ Modern LLM applications can be vulnerable to malicious prompts, sensitive data e
 
 SentinelAI addresses these risks by introducing a safety layer around the LLM:
 
-User
-  │
-  ▼
-Input Guardrails
-  │
-  ├── PII Detection
-  ├── Moderation
-  ├── Jailbreak Detection
-  ├── Prompt Injection Detection
-  └── Custom Safety Checks
-  │
-  ▼
-LLM
-  │
-  ▼
-Output Guardrails
-  │
-  ├── Content Validation
-  ├── PII Detection
-  ├── Policy Validation
-  └── Safety Checks
-  │
-  ▼
-Safe Response
-  │
-  ▼
-User
+## System Architecture
+
+```mermaid
+flowchart TD
+    A[👤 User] --> B[🛡️ Input Guardrails]
+
+    B --> B1[PII Detection]
+    B --> B2[Content Moderation]
+    B --> B3[Jailbreak Detection]
+    B --> B4[Prompt Injection Detection]
+    B --> B5[Custom Safety Checks]
+
+    B1 --> C{Input Safe?}
+    B2 --> C
+    B3 --> C
+    B4 --> C
+    B5 --> C
+
+    C -->|Yes| D[🤖 LLM]
+    C -->|No| E[❌ Block / Reject Request]
+
+    D --> F[🛡️ Output Guardrails]
+
+    F --> F1[Content Validation]
+    F --> F2[PII Detection]
+    F --> F3[Policy Validation]
+    F --> F4[Safety Checks]
+
+    F1 --> G{Output Safe?}
+    F2 --> G
+    F3 --> G
+    F4 --> G
+
+    G -->|Yes| H[✅ Safe Response]
+    G -->|No| I[❌ Block / Sanitize Response]
+
+    H --> A
